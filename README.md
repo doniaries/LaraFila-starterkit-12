@@ -81,9 +81,7 @@ Terima kasih telah mempertimbangkan untuk berkontribusi pada kerangka kerja Lara
 
 Untuk memastikan bahwa komunitas Laravel ramah bagi semua orang, harap tinjau dan patuhi [Kode Etik](https://laravel.com/docs/contributions#code-of-conduct).
 
-## 🛡️ Kerentanan Keamanan
 
-Jika Anda menemukan kerentanan keamanan dalam Laravel, silakan kirim email ke Taylor Otwell melalui [taylor@laravel.com](mailto:taylor@laravel.com). Semua kerentanan keamanan akan segera ditangani.
 
 ## 📄 Lisensi
 
