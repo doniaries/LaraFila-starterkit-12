@@ -6,7 +6,7 @@
 
 1.  Clone repositori ini:
     ```bash
-    git clone <URL_REPOSITORI_ANDA>
+    git clone https://github.com/doniaries/laravel12starterkit.git
     cd laravel12starterkit
     ```
 2.  Salin berkas `.env.example` menjadi `.env`:
