@@ -78,6 +78,12 @@
             "php-http/discovery": true
         }
     },
+    "authors": [
+        {
+            "name": "Doniaries",
+            "email": "doniaries@gmail.com"
+        }
+    ],
     "minimum-stability": "stable",
     "prefer-stable": true
 }
