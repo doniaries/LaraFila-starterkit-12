@@ -3,7 +3,6 @@
 namespace App\Filament\Resources;
 
 use App\Filament\Resources\TaskResource\Pages;
-use App\Filament\Resources\TaskResource\RelationManagers;
 use App\Models\Task;
 use Filament\Forms;
 use Filament\Forms\Form;
@@ -12,7 +11,6 @@ use Filament\Tables;
 use Filament\Tables\Table;
 use Filament\Facades\Filament;
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
 
 class TaskResource extends Resource
 {
@@ -21,8 +19,6 @@ class TaskResource extends Resource
     protected static ?string $navigationIcon = 'heroicon-o-clipboard-document-list';
     protected static ?string $navigationLabel = 'Tasks';
     protected static ?string $pluralNavigationLabel = 'Tasks';
-
-    // Mengubah tenantOwnershipRelationshipName ke team (singular) bukan teams (plural)
     protected static ?string $tenantOwnershipRelationshipName = 'team';
 
     // Gunakan isScopedToTenant untuk menentukan apakah resource dibatasi berdasarkan tenant
@@ -48,12 +44,7 @@ class TaskResource extends Resource
                             ->maxLength(65535)
                             ->columnSpanFull(),
                         Forms\Components\Hidden::make('team_id')
-                            ->default(function () {
-                                if (Filament::hasTenancy() && Filament::getTenant()) {
-                                    return Filament::getTenant()->id;
-                                }
-                                return null;
-                            }),
+                            ->default(fn() => Filament::getTenant()?->id),
                     ]),
             ]);
     }
@@ -61,6 +52,7 @@ class TaskResource extends Resource
     public static function table(Table $table): Table
     {
         return $table
+            ->defaultSort('created_at', 'desc')
             ->columns([
                 Tables\Columns\TextColumn::make('name')
                     ->label('Nama Task')
@@ -69,14 +61,9 @@ class TaskResource extends Resource
                 Tables\Columns\TextColumn::make('description')
                     ->label('Deskripsi')
                     ->limit(50)
-                    ->searchable(),
+                    ->searchable(isIndividual: true, isGlobal: false),
                 Tables\Columns\TextColumn::make('created_at')
                     ->label('Dibuat Pada')
-                    ->dateTime()
-                    ->sortable()
-                    ->toggleable(isToggledHiddenByDefault: true),
-                Tables\Columns\TextColumn::make('updated_at')
-                    ->label('Diperbarui Pada')
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
@@ -114,9 +101,7 @@ class TaskResource extends Resource
 
     public static function getRelations(): array
     {
-        return [
-            //
-        ];
+        return [];
     }
 
     public static function getPages(): array
@@ -133,12 +118,7 @@ class TaskResource extends Resource
     {
         $query = parent::getEloquentQuery();
 
-        // Jika user adalah superadmin dan tenant sudah dipilih
-        if (auth()->user()->hasRole('super_admin') && Filament::hasTenancy() && Filament::getTenant()) {
-            return $query->where('team_id', Filament::getTenant()->id);
-        }
-
-        // Untuk user biasa, filter berdasarkan tenant yang aktif
+        // Jika tenant sudah dipilih
         if (Filament::hasTenancy() && Filament::getTenant()) {
             return $query->where('team_id', Filament::getTenant()->id);
         }
