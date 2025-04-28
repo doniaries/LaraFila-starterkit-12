@@ -24,6 +24,9 @@ class UserResource extends Resource
 {
     protected static ?string $model = User::class;
 
+    // Tambahkan property ini untuk menentukan relationship tenant
+    protected static ?string $tenantOwnershipRelationshipName = 'teams';
+
     protected static ?string $navigationIcon = 'heroicon-o-users';
     protected static ?string $navigationGroup = 'User Management';
     protected static ?string $navigationLabel = 'Users';
@@ -235,11 +238,10 @@ class UserResource extends Resource
             return $query;
         }
 
-        // Admin hanya bisa melihat user di team mereka dan bukan super_admin
-        // Dan tidak melihat dirinya sendiri
+        // Admin hanya bisa melihat user di team mereka sendiri dan bukan super_admin
         $teamIds = auth()->user()->teams->pluck('id')->toArray();
 
-        return $query->where('users.id', '!=', auth()->id())
+        return $query
             ->whereHas('teams', function (Builder $q) use ($teamIds) {
                 $q->whereIn('teams.id', $teamIds);
             })
