@@ -14,20 +14,18 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        // User::factory(10)->create();
-
-        // User::factory()->create([
-        //     'name' => 'Test User',
-        //     'email' => 'test@example.com',
-        //     'password' => Hash::make('password'),
-        //     'is_active' => true,
-        // ]);
-
         $this->call([
+            // Roles harus dibuat sebelum users
             RoleSeeder::class,
+
+            // Shield seeder untuk permission
             ShieldSeeder::class,
-            UserSeeder::class,
+
+            // Team harus dibuat sebelum user-team assignment
             TeamSeeder::class,
+
+            // User seeder terakhir karena membutuhkan roles dan teams
+            UserSeeder::class,
         ]);
     }
 }
