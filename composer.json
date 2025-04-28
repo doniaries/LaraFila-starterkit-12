@@ -1,8 +1,8 @@
 {
-    // "$schema": "https://getcomposer.org/schema.json",
-    "name": "doniaries/larafila12-starter-kit",
-    "description": "Filament starter kit include ready make Multi-Tenant, Filament Shield, Filament Exception, Customize Login Page",
+    "$schema": "https://getcomposer.org/schema.json",
+    "name": "tnylea/filamentapp",
     "type": "project",
+    "description": "The skeleton application for the Laravel framework.",
     "keywords": [
         "laravel",
         "framework"
@@ -78,12 +78,6 @@
             "php-http/discovery": true
         }
     },
-    "authors": [
-        {
-            "name": "Doniaries",
-            "email": "doniaries@gmail.com"
-        }
-    ],
     "minimum-stability": "stable",
     "prefer-stable": true
 }
