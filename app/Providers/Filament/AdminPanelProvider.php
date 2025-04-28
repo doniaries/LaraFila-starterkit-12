@@ -76,7 +76,7 @@ class AdminPanelProvider extends PanelProvider
                         'sm' => 2,
                     ]),
             ])
-            ->tenantRegistration(RegisterTeam::class)
+            // ->tenantRegistration(RegisterTeam::class)
             ->tenant(
                 Team::class,
                 slugAttribute: 'slug'

@@ -16,11 +16,18 @@ class DatabaseSeeder extends Seeder
     {
         // User::factory(10)->create();
 
-        User::factory()->create([
-            'name' => 'Test User',
-            'email' => 'test@example.com',
-            'password' => Hash::make('password'),
-            'is_active' => true,
+        // User::factory()->create([
+        //     'name' => 'Test User',
+        //     'email' => 'test@example.com',
+        //     'password' => Hash::make('password'),
+        //     'is_active' => true,
+        // ]);
+
+        $this->call([
+            RoleSeeder::class,
+            ShieldSeeder::class,
+            UserSeeder::class,
+            TeamSeeder::class,
         ]);
     }
 }
