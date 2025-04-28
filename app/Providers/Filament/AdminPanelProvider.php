@@ -30,6 +30,7 @@ class AdminPanelProvider extends PanelProvider
             ->id('admin')
             ->path('admin')
             ->login()
+            ->sidebarCollapsibleOnDesktop()
             ->font('Poppins')
             ->colors([
                 'primary' => Color::Amber,
@@ -58,6 +59,9 @@ class AdminPanelProvider extends PanelProvider
             ->authMiddleware([
                 Authenticate::class,
             ])
+            ->tenantMiddleware([
+                \Hasnayeen\Themes\Http\Middleware\SetTheme::class,
+            ])
             ->plugins([
                 FilamentShieldPlugin::make()
                     ->gridColumns([
@@ -75,6 +79,7 @@ class AdminPanelProvider extends PanelProvider
                         'default' => 1,
                         'sm' => 2,
                     ]),
+                \Hasnayeen\Themes\ThemesPlugin::make()
             ])
             // ->tenantRegistration(RegisterTeam::class)
             ->tenant(
