@@ -21,7 +21,9 @@ class TaskResource extends Resource
     protected static ?string $navigationIcon = 'heroicon-o-clipboard-document-list';
     protected static ?string $navigationLabel = 'Tasks';
     protected static ?string $pluralNavigationLabel = 'Tasks';
-    protected static ?string $tenantOwnershipRelationshipName = 'teams';
+
+    // Mengubah tenantOwnershipRelationshipName ke team (singular) bukan teams (plural)
+    protected static ?string $tenantOwnershipRelationshipName = 'team';
 
     // Gunakan isScopedToTenant untuk menentukan apakah resource dibatasi berdasarkan tenant
     public static function isScopedToTenant(): bool
