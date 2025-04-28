@@ -21,6 +21,54 @@ Laravel is a web application framework with expressive, elegant syntax. We belie
 
 Laravel is accessible, powerful, and provides tools required for large, robust applications.
 
+## Instalasi
+
+1.  Clone repositori ini:
+    ```bash
+    git clone <URL_REPOSITORI_ANDA>
+    cd laravel12starterkit
+    ```
+2.  Salin berkas `.env.example` menjadi `.env`:
+    ```bash
+    cp .env.example .env
+    ```
+3.  Instal dependensi PHP menggunakan Composer:
+    ```bash
+    composer install
+    ```
+4.  Buat kunci aplikasi:
+    ```bash
+    php artisan key:generate
+    ```
+5.  Konfigurasikan detail database Anda di berkas `.env`.
+6.  Jalankan migrasi database:
+    ```bash
+    php artisan migrate
+    ```
+7.  Instal dependensi Node.js:
+    ```bash
+    npm install
+    ```
+8.  Jalankan server pengembangan:
+    ```bash
+    npm run dev
+    ```
+    Dan di terminal lain:
+    ```bash
+    php artisan serve
+    ```
+
+## Dependensi Frontend (Plugins)
+
+Proyek ini menggunakan Vite untuk kompilasi aset frontend. Berikut adalah dependensi utama yang digunakan:
+
+*   **@tailwindcss/vite**: Integrasi Tailwind CSS dengan Vite.
+*   **axios**: Klien HTTP berbasis Promise untuk browser dan Node.js.
+*   **concurrently**: Menjalankan beberapa perintah secara bersamaan.
+*   **laravel-vite-plugin**: Integrasi Vite resmi untuk Laravel.
+*   **tailwindcss**: Framework CSS utility-first.
+*   **vite**: Alat build frontend generasi berikutnya.
+
 ## Learning Laravel
 
 Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
