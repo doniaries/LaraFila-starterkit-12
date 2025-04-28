@@ -37,13 +37,20 @@ class UserResource extends Resource
                     ->email()
                     ->required()
                     ->maxLength(255),
-                Forms\Components\DateTimePicker::make('email_verified_at')
-                    ->disabled()
-                    ->default(now()),
+
                 Forms\Components\TextInput::make('password')
                     ->password()
-                    ->required()
+                    ->dehydrated(fn($state) => filled($state))
+                    ->required(fn(string $context): bool => $context === 'create')
                     ->maxLength(255),
+                Forms\Components\Select::make('roles')
+                    ->relationship('roles', 'name')
+                    ->saveRelationshipsUsing(function (Model $record, $state) {
+                        $record->roles()->syncWithPivotValues($state, [config('permission.column_names.team_foreign_key') => getPermissionsTeamId()]);
+                    })
+                    ->multiple()
+                    ->preload()
+                    ->searchable(),
                 Forms\Components\Toggle::make('is_active')
                     ->required(),
             ]);
@@ -56,10 +63,11 @@ class UserResource extends Resource
                 Tables\Columns\TextColumn::make('name')
                     ->searchable(),
                 Tables\Columns\TextColumn::make('email')
-                    ->searchable(),
-                Tables\Columns\TextColumn::make('email_verified_at')
-                    ->dateTime()
+                    ->searchable()
                     ->sortable(),
+                Tables\Columns\TextColumn::make('roles.name')
+                    ->label('Roles')
+                    ->badge(),
                 Tables\Columns\IconColumn::make('is_active')
                     ->boolean(),
                 Tables\Columns\TextColumn::make('created_at')
