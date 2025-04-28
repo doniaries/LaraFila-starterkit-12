@@ -2,94 +2,118 @@
 
 namespace App\Filament\Resources;
 
-use App\Filament\Resources\UserResource\Pages;
-use App\Filament\Resources\UserResource\RelationManagers;
-use App\Models\User;
 use Filament\Forms;
-use Filament\Forms\Form;
-use Filament\Resources\Resource;
+use App\Models\User;
 use Filament\Tables;
+use Filament\Forms\Form;
 use Filament\Tables\Table;
+use Filament\Facades\Filament;
+use Filament\Resources\Resource;
 use Illuminate\Database\Eloquent\Builder;
+use App\Filament\Resources\UserResource\Pages;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
+use App\Filament\Resources\UserResource\RelationManagers;
+use STS\FilamentImpersonate\Tables\Actions\Impersonate;
+
 
 class UserResource extends Resource
 {
     protected static ?string $model = User::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-users';
-    protected static ?string $navigationGroup = 'Settings';
-    protected static ?int $navigationSort = 1;
-    protected static ?string $slug = 'users';
-    protected static ?string $recordTitleAttribute = 'name';
-    protected static ?string $tenantOwnershipRelationshipName = 'teams';
+    protected static ?string $navigationIcon = 'heroicon-o-lock-closed';
 
-
+    public static function getNavigationGroup(): ?string
+    {
+        return __('filament-shield::filament-shield.nav.group');
+    }
 
     public static function form(Form $form): Form
     {
         return $form
             ->schema([
-                Forms\Components\TextInput::make('name')
-                    ->required()
-                    ->maxLength(255),
-                Forms\Components\TextInput::make('email')
-                    ->email()
-                    ->required()
-                    ->maxLength(255),
+                Forms\Components\Section::make(__('User'))
+                    ->schema([
+                        Forms\Components\TextInput::make('name')
+                            ->required()
+                            ->maxLength(255),
+                        Forms\Components\TextInput::make('email')
+                            ->email()
+                            ->required()
+                            ->maxLength(255),
+                        Forms\Components\TextInput::make('password')
+                            ->password()
+                            ->dehydrated(fn($state) => filled($state))
+                            ->required(fn(string $context): bool => $context === 'create')
+                            ->maxLength(255),
+                        Forms\Components\Select::make('roles')
+                            ->relationship('roles', 'name', function ($query) {
+                                if (auth()->user()->id === 1) {
+                                    return $query;
+                                }
+                                return $query->whereNot('id', 1);
+                            })
+                            ->multiple()
+                            ->preload()
+                            ->searchable(),
+                    ])->columns(2),
+                Forms\Components\Section::make(__('Tenant'))
+                    ->description('Selecting Multi Tenancy will allow you to assign the user to a tenant.')
+                    ->schema([
+                        Forms\Components\Select::make('teams')
+                            ->label(__('Tenant'))
+                            ->relationship('teams', 'name')
+                            ->multiple()
+                            ->preload()
+                            ->searchable(),
+                    ])
 
-                Forms\Components\TextInput::make('password')
-                    ->password()
-                    ->dehydrated(fn($state) => filled($state))
-                    ->required(fn(string $context): bool => $context === 'create')
-                    ->maxLength(255),
-                Forms\Components\Select::make('roles')
-                    ->relationship('roles', 'name')
-                    ->saveRelationshipsUsing(function (Model $record, $state) {
-                        $record->roles()->syncWithPivotValues($state, [config('permission.column_names.team_foreign_key') => getPermissionsTeamId()]);
-                    })
-                    ->multiple()
-                    ->preload()
-                    ->searchable(),
-                Forms\Components\Toggle::make('is_active')
-                    ->required(),
             ]);
     }
 
     public static function table(Table $table): Table
     {
         return $table
+            ->query(static::getEloquentQuery())
             ->columns([
                 Tables\Columns\TextColumn::make('name')
                     ->searchable(),
-                Tables\Columns\TextColumn::make('email')
-                    ->searchable()
-                    ->sortable(),
+                Tables\Columns\TextColumn::make('email'),
                 Tables\Columns\TextColumn::make('roles.name')
-                    ->label('Roles')
-                    ->badge(),
-                Tables\Columns\IconColumn::make('is_active')
-                    ->boolean(),
+                    ->badge()
+                    ->label(__('Role'))
+                    ->colors(['primary'])
+                    ->searchable(),
                 Tables\Columns\TextColumn::make('created_at')
-                    ->dateTime()
-                    ->sortable()
-                    ->toggleable(isToggledHiddenByDefault: true),
+                    ->dateTime(),
                 Tables\Columns\TextColumn::make('updated_at')
-                    ->dateTime()
-                    ->sortable()
-                    ->toggleable(isToggledHiddenByDefault: true),
+                    ->dateTime(),
             ])
             ->filters([
                 //
             ])
             ->actions([
+                Impersonate::make(),
                 Tables\Actions\EditAction::make(),
-            ])
-            ->bulkActions([
-                Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make(),
-                ]),
+                Tables\Actions\DeleteAction::make(),
             ]);
+    }
+
+    public static function isScopedToTenant(): bool
+    {
+        if (Filament::getTenant()->id === 1) {
+            return false;
+        }
+        return true;
+    }
+
+    public static function getEloquentQuery(): Builder
+    {
+        $query = parent::getEloquentQuery();
+
+        if (auth()->user()->id === 1) {
+            return $query;
+        }
+        return $query->whereNot('id', 1);
     }
 
     public static function getRelations(): array
