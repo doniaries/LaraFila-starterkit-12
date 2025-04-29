@@ -1,8 +1,8 @@
 
 
-# 🚀 laravel12starterkit
+# 🚀 laravel12starterkit -> MultiTenant-Shield
 
-Laravel 12 Starter Kit adalah proyek Laravel yang dirancang untuk memudahkan Anda memulai pengembangan aplikasi web dengan Laravel 12. Proyek ini menyediakan struktur dasar yang memungkinkan Anda dengan cepat membuat aplikasi web yang responsif dan nyaman digunakan.
+Laravel 12 Starter Kit adalah proyek Laravel yang dirancang untuk memudahkan Anda memulai pengembangan aplikasi web dengan Laravel 12. Proyek ini menyediakan struktur dasar yang memungkinkan Anda dengan cepat membuat aplikasi web yang responsif dan nyaman digunakan. Menggunakan
 
 
 1.  📥 Clone repositori ini:
